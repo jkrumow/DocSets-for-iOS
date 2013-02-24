@@ -17,6 +17,8 @@
 {
 	self = [super init];
 	
+    searchQueue = dispatch_queue_create("DocSet Search Queue", NULL);
+    
 	path = docSetPath;
 	
 	NSString *infoPath = [path stringByAppendingPathComponent:@"Contents/Info.plist"];
@@ -29,10 +31,11 @@
 		copyright = [info objectForKey:@"NSHumanReadableCopyright"];
 		if (!copyright) copyright = @"";
 	} else {
+        dispatch_release(searchQueue);
 		self = nil;
 	}
 	
-	searchQueue = dispatch_queue_create("DocSet Search Queue", NULL);
+	
 	
 	return self;
 }
