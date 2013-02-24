@@ -178,9 +178,9 @@
 - (void)downloadPaused:(NSNotification *)notification
 {
     if (notification.object == self.download) {
-        [self.cancelPauseDownloadButton setImage:[UIImage imageNamed:@"BubbleOrange.png"] forState:UIControlStateNormal];
-        [self.cancelPauseDownloadButton setImage:[UIImage imageNamed:@"BubbleOrange.png"] forState:UIControlStateHighlighted];
-        [self.cancelPauseDownloadButton setImage:[UIImage imageNamed:@"BubbleOrange.png"] forState:UIControlStateSelected];
+        [self.cancelPauseDownloadButton setImage:[UIImage imageNamed:@"Pause.png"] forState:UIControlStateNormal];
+        [self.cancelPauseDownloadButton setImage:[UIImage imageNamed:@"Pause-Pressed.png"] forState:UIControlStateHighlighted];
+        [self.cancelPauseDownloadButton setImage:[UIImage imageNamed:@"Pause-Pressed.png"] forState:UIControlStateSelected];
     }
 }
 

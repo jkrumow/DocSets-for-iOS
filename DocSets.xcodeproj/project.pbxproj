@@ -8,6 +8,10 @@
 
 /* Begin PBXBuildFile section */
 		153F47CA1604C7B600C707CD /* NSFileManager+DocSetsAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 153F47C91604C7B600C707CD /* NSFileManager+DocSetsAdditions.m */; };
+		15B692AE16DADFC000C9E8CA /* Pause-Pressed.png in Resources */ = {isa = PBXBuildFile; fileRef = 15B692AA16DADFC000C9E8CA /* Pause-Pressed.png */; };
+		15B692AF16DADFC000C9E8CA /* Pause-Pressed@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 15B692AB16DADFC000C9E8CA /* Pause-Pressed@2x.png */; };
+		15B692B016DADFC000C9E8CA /* Pause.png in Resources */ = {isa = PBXBuildFile; fileRef = 15B692AC16DADFC000C9E8CA /* Pause.png */; };
+		15B692B116DADFC000C9E8CA /* Pause@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 15B692AD16DADFC000C9E8CA /* Pause@2x.png */; };
 		1D3623260D0F684500981E51 /* DocSetsAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 1D3623250D0F684500981E51 /* DocSetsAppDelegate.m */; };
 		1D60589F0D05DD5A006BFB54 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1D30AB110D05D00D00671497 /* Foundation.framework */; };
 		1DF5F4E00D08C38300B7A737 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1DF5F4DF0D08C38300B7A737 /* UIKit.framework */; };
@@ -131,6 +135,10 @@
 /* Begin PBXFileReference section */
 		153F47C81604C7B600C707CD /* NSFileManager+DocSetsAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSFileManager+DocSetsAdditions.h"; sourceTree = "<group>"; };
 		153F47C91604C7B600C707CD /* NSFileManager+DocSetsAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSFileManager+DocSetsAdditions.m"; sourceTree = "<group>"; };
+		15B692AA16DADFC000C9E8CA /* Pause-Pressed.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Pause-Pressed.png"; sourceTree = "<group>"; };
+		15B692AB16DADFC000C9E8CA /* Pause-Pressed@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Pause-Pressed@2x.png"; sourceTree = "<group>"; };
+		15B692AC16DADFC000C9E8CA /* Pause.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Pause.png; sourceTree = "<group>"; };
+		15B692AD16DADFC000C9E8CA /* Pause@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Pause@2x.png"; sourceTree = "<group>"; };
 		1D30AB110D05D00D00671497 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		1D3623240D0F684500981E51 /* DocSetsAppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DocSetsAppDelegate.h; sourceTree = "<group>"; };
 		1D3623250D0F684500981E51 /* DocSetsAppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DocSetsAppDelegate.m; sourceTree = "<group>"; };
@@ -387,6 +395,10 @@
 		5D892D8E14D73C72005B3273 /* Buttons */ = {
 			isa = PBXGroup;
 			children = (
+				15B692AA16DADFC000C9E8CA /* Pause-Pressed.png */,
+				15B692AB16DADFC000C9E8CA /* Pause-Pressed@2x.png */,
+				15B692AC16DADFC000C9E8CA /* Pause.png */,
+				15B692AD16DADFC000C9E8CA /* Pause@2x.png */,
 				5D892D8814D73C5A005B3273 /* Cancel.png */,
 				5D892D8914D73C5A005B3273 /* Cancel@2x.png */,
 				5D892D8614D73C5A005B3273 /* Cancel-Pressed.png */,
@@ -739,6 +751,10 @@
 				7F0BEE78156D75E4008D806F /* whitey.png in Resources */,
 				7F0BEE79156D75E4008D806F /* whitey@2x.png in Resources */,
 				7F97CFCF160CDDB800313B1D /* Default-568h@2x.png in Resources */,
+				15B692AE16DADFC000C9E8CA /* Pause-Pressed.png in Resources */,
+				15B692AF16DADFC000C9E8CA /* Pause-Pressed@2x.png in Resources */,
+				15B692B016DADFC000C9E8CA /* Pause.png in Resources */,
+				15B692B116DADFC000C9E8CA /* Pause@2x.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
