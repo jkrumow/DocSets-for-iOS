@@ -40,7 +40,7 @@
 	[super loadView];
 	
 	self.detailViewController.view.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
-	self.masterViewController.view.autoresizingMask = UIViewAutoresizingFlexibleRightMargin | UIViewAutoresizingFlexibleHeight;
+	self.masterViewController.view.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
 	
 	self.masterViewController.view.layer.cornerRadius = 6.0;
 	self.masterViewController.view.clipsToBounds = YES;
@@ -58,7 +58,6 @@
 	
 	[self.view addSubview:self.detailViewController.view];
 	self.masterViewController.view.frame = CGRectInset(_masterContainerView.bounds, 3, 3);
-	//self.masterViewController.view.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
 	[_masterContainerView addSubview:self.masterViewController.view];
 	[self.view addSubview:_masterContainerView];
 	
