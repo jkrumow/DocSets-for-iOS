@@ -53,8 +53,9 @@
 typedef enum DocSetDownloadStatus {
 	DocSetDownloadStatusWaiting = 0,
 	DocSetDownloadStatusDownloading,
-    DocSetDownloadStatusPaused,
+    DocSetDownloadStatusDownloadPaused,
 	DocSetDownloadStatusExtracting,
+    DocSetDownloadStatusExtractionPaused,
 	DocSetDownloadStatusFinished
 } DocSetDownloadStatus;
 
@@ -79,7 +80,7 @@ typedef enum DocSetDownloadStatus {
 @property (nonatomic, strong) NSURLConnection *connection;
 @property (strong) NSString *downloadTargetPath;
 @property (nonatomic, strong) NSString *extractedPath;
-@property (nonatomic, assign) DocSetDownloadStatus status;
+@property (atomic, assign) DocSetDownloadStatus status;
 @property (nonatomic, assign) float progress;
 @property (atomic, assign) BOOL shouldCancelExtracting; // must be atomic
 @property (readonly) NSUInteger bytesDownloaded;

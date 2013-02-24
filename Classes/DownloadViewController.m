@@ -159,7 +159,7 @@
 		return;
 	}
 	DocSetDownloadStatus status = self.download.status;
-	if (status == DocSetDownloadStatusWaiting || status == DocSetDownloadStatusDownloading || status == DocSetDownloadStatusPaused || status == DocSetDownloadStatusExtracting) {
+	if (status == DocSetDownloadStatusWaiting || status == DocSetDownloadStatusDownloading || status == DocSetDownloadStatusDownloadPaused || status == DocSetDownloadStatusExtracting || status == DocSetDownloadStatusExtractionPaused) {
 		self.progressView.frame = CGRectMake(60, CGRectGetMidY(self.contentView.bounds) - self.progressView.bounds.size.height * 0.5, CGRectGetWidth(self.contentView.bounds) - 70, self.progressView.frame.size.height);
 		CGRect textLabelFrame = self.textLabel.frame;
 		self.textLabel.frame = CGRectMake(textLabelFrame.origin.x, 3, textLabelFrame.size.width, textLabelFrame.size.height);
@@ -267,7 +267,7 @@
 		} else {
 			self.detailTextLabel.text = NSLocalizedString(@"Downloading...", nil);
 		}
-	} else if (self.download.status == DocSetDownloadStatusPaused) {
+	} else if (self.download.status == DocSetDownloadStatusDownloadPaused || self.download.status == DocSetDownloadStatusExtractionPaused) {
         self.detailTextLabel.text = NSLocalizedString(@"Paused...", nil);
     } else if (self.download.status == DocSetDownloadStatusExtracting) {
 		int extractedPercentage = (int)(self.download.progress * 100);
@@ -293,7 +293,7 @@
 
 - (void)cancelPauseDownload:(id)sender
 {
-    if (self.download.status == DocSetDownloadStatusPaused)
+    if (self.download.status == DocSetDownloadStatusDownloadPaused || self.download.status == DocSetDownloadStatusExtractionPaused)
         [[DocSetDownloadManager sharedDownloadManager] resumeDownload:self.download];
     else
         [[DocSetDownloadManager sharedDownloadManager] stopDownload:self.download];
