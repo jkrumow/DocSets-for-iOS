@@ -284,6 +284,7 @@
 	
     __block DocSetDownload *blockSelf = self;
     self.expirationBlock = ^{
+        NSLog(@"Background process timed out.");
         [blockSelf pause];
     };
 	
@@ -314,6 +315,9 @@
 {
     if (self.status == DocSetDownloadStatusDownloading) {
         self.status = DocSetDownloadStatusPaused;
+        
+        NSLog(@"Pausing download.");
+        
         [self.connection cancel];
         [self.fileHandle closeFile];
         [[DocSetDownloadManager sharedDownloadManager] downloadPaused:self];
@@ -329,13 +333,13 @@
     if (self.status == DocSetDownloadStatusPaused) {
         self.status = DocSetDownloadStatusDownloading;
         
+        NSLog(@"Resuming download.");
+        
         _backgroundTask = [[UIApplication sharedApplication] beginBackgroundTaskWithExpirationHandler:self.expirationBlock];
         
         // Reopen file handle
         self.fileHandle = [NSFileHandle fileHandleForWritingAtPath:self.downloadTargetPath];
         [self.fileHandle seekToEndOfFile];
-        
-        NSLog(@"Resuming download at offset: %lld", [self.fileHandle offsetInFile]);
         bytesDownloaded = [self.fileHandle offsetInFile];
         
         // Restart download with range.
@@ -351,7 +355,7 @@
 - (void)connection:(NSURLConnection *)connection didReceiveResponse:(NSURLResponse *)response
 {
 	NSDictionary *headers = [(NSHTTPURLResponse *)response allHeaderFields];
-	downloadSize = [[headers objectForKey:@"Content-Length"] integerValue];
+	downloadSize = bytesDownloaded + [[headers objectForKey:@"Content-Length"] integerValue];
 }
 
 - (void)connection:(NSURLConnection *)connection didReceiveData:(NSData *)data
@@ -368,7 +372,6 @@
         }
         @catch (NSException *exception) {
             NSLog(@"%@ %@", [exception reason], [exception userInfo]);
-            NSLog(@"ERROR: pausing download.");
             [self pause];
         }
     }
