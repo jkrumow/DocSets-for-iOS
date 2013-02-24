@@ -11,6 +11,8 @@
 #define DocSetDownloadManagerAvailableDocSetsChangedNotification	@"DocSetDownloadManagerAvailableDocSetsChangedNotification"
 #define DocSetDownloadManagerStartedDownloadNotification			@"DocSetDownloadManagerStartedDownloadNotification"
 #define DocSetDownloadManagerUpdatedDocSetsNotification				@"DocSetDownloadManagerUpdatedDocSetsNotification"
+#define DocSetDownloadPausedNotification                            @"DocSetDownloadPausedNotification"
+#define DocSetDownloadResumingNotification                          @"DocSetDownloadResumingNotification"
 #define DocSetDownloadFinishedNotification							@"DocSetDownloadFinishedNotification"
 
 @class DocSet, DocSetDownload;
@@ -42,6 +44,7 @@
 - (void)deleteDocSet:(DocSet *)docSetToDelete;
 - (DocSetDownload *)downloadForURL:(NSString *)URL;
 - (void)stopDownload:(DocSetDownload *)download;
+- (void)resumeDownload:(DocSetDownload *)download;
 - (DocSet *)downloadedDocSetWithName:(NSString *)docSetName;
 
 @end
@@ -50,6 +53,7 @@
 typedef enum DocSetDownloadStatus {
 	DocSetDownloadStatusWaiting = 0,
 	DocSetDownloadStatusDownloading,
+    DocSetDownloadStatusPaused,
 	DocSetDownloadStatusExtracting,
 	DocSetDownloadStatusFinished
 } DocSetDownloadStatus;
@@ -80,10 +84,13 @@ typedef enum DocSetDownloadStatus {
 @property (atomic, assign) BOOL shouldCancelExtracting; // must be atomic
 @property (readonly) NSUInteger bytesDownloaded;
 @property (readonly) NSInteger downloadSize;
+@property (nonatomic, copy) void (^expirationBlock)(void);
 
 - (id)initWithURL:(NSURL *)URL;
 - (void)start;
 - (void)cancel;
+- (void)pause;
+- (void)resume;
 - (void)fail;
 
 @end

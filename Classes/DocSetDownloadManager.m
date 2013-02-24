@@ -131,6 +131,14 @@
 	}
 }
 
+- (void)resumeDownload:(DocSetDownload *)download
+{
+    if (download.status == DocSetDownloadStatusPaused) {
+        [download resume];
+        [[NSNotificationCenter defaultCenter] postNotificationName:DocSetDownloadResumingNotification object:download];
+    }
+}
+
 - (void)downloadDocSetAtURL:(NSString *)URL
 {
 	if ([_downloadsByURL objectForKey:URL]) {
@@ -239,6 +247,16 @@
                       otherButtonTitles:nil] show];
 }
 
+- (void)downloadPaused:(DocSetDownload *)download
+{
+    [[NSNotificationCenter defaultCenter] postNotificationName:DocSetDownloadPausedNotification object:download];
+}
+
+- (void)downloadResuming:(DocSetDownload *)download
+{
+    [[NSNotificationCenter defaultCenter] postNotificationName:DocSetDownloadResumingNotification object:download];
+}
+
 @end
 
 
@@ -246,7 +264,7 @@
 @implementation DocSetDownload
 
 @synthesize connection=_connection, URL=_URL, fileHandle=_fileHandle, downloadTargetPath=_downloadTargetPath, extractedPath=_extractedPath, progress=_progress, status=_status, shouldCancelExtracting = _shouldCancelExtracting;
-@synthesize downloadSize, bytesDownloaded;
+@synthesize downloadSize, bytesDownloaded, expirationBlock;
 
 - (id)initWithURL:(NSURL *)URL
 {
@@ -264,7 +282,12 @@
 		return;
 	}
 	
-	_backgroundTask = [[UIApplication sharedApplication] beginBackgroundTaskWithExpirationHandler:nil];
+    __block DocSetDownload *blockSelf = self;
+    self.expirationBlock = ^{
+        [blockSelf pause];
+    };
+	
+    _backgroundTask = [[UIApplication sharedApplication] beginBackgroundTaskWithExpirationHandler:self.expirationBlock];
 	
 	self.status = DocSetDownloadStatusDownloading;
 	
@@ -287,6 +310,44 @@
 	}
 }
 
+- (void)pause
+{
+    if (self.status == DocSetDownloadStatusDownloading) {
+        self.status = DocSetDownloadStatusPaused;
+        [self.connection cancel];
+        [self.fileHandle closeFile];
+        [[DocSetDownloadManager sharedDownloadManager] downloadPaused:self];
+        
+        if (_backgroundTask != UIBackgroundTaskInvalid) {
+            [[UIApplication sharedApplication] endBackgroundTask:_backgroundTask];
+        }
+    }
+}
+
+- (void)resume
+{
+    if (self.status == DocSetDownloadStatusPaused) {
+        self.status = DocSetDownloadStatusDownloading;
+        
+        _backgroundTask = [[UIApplication sharedApplication] beginBackgroundTaskWithExpirationHandler:self.expirationBlock];
+        
+        // Reopen file handle
+        self.fileHandle = [NSFileHandle fileHandleForWritingAtPath:self.downloadTargetPath];
+        [self.fileHandle seekToEndOfFile];
+        
+        NSLog(@"Resuming download at offset: %lld", [self.fileHandle offsetInFile]);
+        bytesDownloaded = [self.fileHandle offsetInFile];
+        
+        // Restart download with range.
+        NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:self.URL];
+        NSString *requestRange = [NSString stringWithFormat:@"bytes=%d-", bytesDownloaded];
+        [request addValue:requestRange forHTTPHeaderField:@"Range"];
+        self.connection = [NSURLConnection connectionWithRequest:request delegate:self];
+        
+        [[DocSetDownloadManager sharedDownloadManager] downloadResuming:self];
+    }
+}
+
 - (void)connection:(NSURLConnection *)connection didReceiveResponse:(NSURLResponse *)response
 {
 	NSDictionary *headers = [(NSHTTPURLResponse *)response allHeaderFields];
@@ -295,12 +356,22 @@
 
 - (void)connection:(NSURLConnection *)connection didReceiveData:(NSData *)data
 {
-	bytesDownloaded += [data length];
-	if (downloadSize != 0) {
-		self.progress = (float)bytesDownloaded / (float)downloadSize;
-		//NSLog(@"Download progress: %f", self.progress);
-	}
-	[self.fileHandle writeData:data];
+	if (self.status == DocSetDownloadStatusDownloading) {
+        bytesDownloaded += [data length];
+        if (downloadSize != 0) {
+            self.progress = (float)bytesDownloaded / (float)downloadSize;
+            //NSLog(@"Download progress: %f", self.progress);
+        }
+        
+        @try {
+            [self.fileHandle writeData:data];
+        }
+        @catch (NSException *exception) {
+            NSLog(@"%@ %@", [exception reason], [exception userInfo]);
+            NSLog(@"ERROR: pausing download.");
+            [self pause];
+        }
+    }
 }
 
 - (void)connectionDidFinishLoading:(NSURLConnection *)connection

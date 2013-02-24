@@ -28,10 +28,10 @@
 @property (nonatomic, strong) DocSetDownload *download;
 @property (nonatomic, strong) UIView *downloadInfoView;
 @property (nonatomic, strong) UIProgressView *progressView;
-@property (nonatomic, strong) UIButton *cancelDownloadButton;
+@property (nonatomic, strong) UIButton *cancelPauseDownloadButton;
 
 - (void)setupDownloadInfoView;
 - (void)updateStatusLabel;
-- (void)cancelDownload:(id)sender;
+- (void)cancelPauseDownload:(id)sender;
 
 @end

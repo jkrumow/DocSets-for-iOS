@@ -122,7 +122,7 @@
 
 @implementation DownloadCell
 
-@synthesize downloadInfo=_downloadInfo, download=_download, downloadInfoView=_downloadInfoView, progressView=_progressView, cancelDownloadButton=_cancelDownloadButton;
+@synthesize downloadInfo=_downloadInfo, download=_download, downloadInfoView=_downloadInfoView, progressView=_progressView, cancelPauseDownloadButton=_cancelDownloadButton;
 
 - (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier
 {
@@ -149,7 +149,7 @@
     [_cancelDownloadButton setImage:[UIImage imageNamed:@"Cancel.png"] forState:UIControlStateNormal];
     [_cancelDownloadButton setImage:[UIImage imageNamed:@"Cancel-Pressed.png"] forState:UIControlStateHighlighted];
     [_cancelDownloadButton setImage:[UIImage imageNamed:@"Cancel-Pressed.png"] forState:UIControlStateSelected];
-    [_cancelDownloadButton addTarget:self action:@selector(cancelDownload:) forControlEvents:UIControlEventTouchUpInside];
+    [_cancelDownloadButton addTarget:self action:@selector(cancelPauseDownload:) forControlEvents:UIControlEventTouchUpInside];
 }
 
 - (void)layoutSubviews
@@ -159,7 +159,7 @@
 		return;
 	}
 	DocSetDownloadStatus status = self.download.status;
-	if (status == DocSetDownloadStatusWaiting || status == DocSetDownloadStatusDownloading || status == DocSetDownloadStatusExtracting) {	
+	if (status == DocSetDownloadStatusWaiting || status == DocSetDownloadStatusDownloading || status == DocSetDownloadStatusPaused || status == DocSetDownloadStatusExtracting) {
 		self.progressView.frame = CGRectMake(60, CGRectGetMidY(self.contentView.bounds) - self.progressView.bounds.size.height * 0.5, CGRectGetWidth(self.contentView.bounds) - 70, self.progressView.frame.size.height);
 		CGRect textLabelFrame = self.textLabel.frame;
 		self.textLabel.frame = CGRectMake(textLabelFrame.origin.x, 3, textLabelFrame.size.width, textLabelFrame.size.height);
@@ -173,6 +173,24 @@
 	if (!self.download) {
 		self.download = [[DocSetDownloadManager sharedDownloadManager] downloadForURL:[self.downloadInfo objectForKey:@"URL"]];
 	}
+}
+
+- (void)downloadPaused:(NSNotification *)notification
+{
+    if (notification.object == self.download) {
+        [self.cancelPauseDownloadButton setImage:[UIImage imageNamed:@"BubbleOrange.png"] forState:UIControlStateNormal];
+        [self.cancelPauseDownloadButton setImage:[UIImage imageNamed:@"BubbleOrange.png"] forState:UIControlStateHighlighted];
+        [self.cancelPauseDownloadButton setImage:[UIImage imageNamed:@"BubbleOrange.png"] forState:UIControlStateSelected];
+    }
+}
+
+- (void)downloadResuming:(NSNotification *)notification
+{
+    if (notification.object == self.download) {
+        [self.cancelPauseDownloadButton setImage:[UIImage imageNamed:@"Cancel.png"] forState:UIControlStateNormal];
+        [self.cancelPauseDownloadButton setImage:[UIImage imageNamed:@"Cancel-Pressed.png"] forState:UIControlStateHighlighted];
+        [self.cancelPauseDownloadButton setImage:[UIImage imageNamed:@"Cancel-Pressed.png"] forState:UIControlStateSelected];
+    }
 }
 
 - (void)downloadFinished:(NSNotification *)notification
@@ -205,17 +223,21 @@
 		[_download removeObserver:self forKeyPath:@"progress"];
 		[_download removeObserver:self forKeyPath:@"status"];
 		[[NSNotificationCenter defaultCenter] removeObserver:self name:DocSetDownloadFinishedNotification object:_download];
+        [[NSNotificationCenter defaultCenter] removeObserver:self name:DocSetDownloadPausedNotification object:_download];
+        [[NSNotificationCenter defaultCenter] removeObserver:self name:DocSetDownloadResumingNotification object:_download];
 	}
 	
 	_download = download;
 	[_download addObserver:self forKeyPath:@"progress" options:NSKeyValueObservingOptionNew context:nil];
 	[_download addObserver:self forKeyPath:@"status" options:NSKeyValueObservingOptionNew context:nil];
 	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(downloadFinished:) name:DocSetDownloadFinishedNotification object:_download];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(downloadPaused:) name:DocSetDownloadPausedNotification object:_download];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(downloadResuming:) name:DocSetDownloadResumingNotification object:_download];
 	
 	if (_download) {
 		self.textLabel.font = [UIFont boldSystemFontOfSize:15.0];
 		self.progressView.progress = self.download.progress;
-		self.accessoryView = self.cancelDownloadButton;
+		self.accessoryView = self.cancelPauseDownloadButton;
 		[self.contentView addSubview:self.progressView];
 	} else {
 		self.textLabel.font = [UIFont boldSystemFontOfSize:18.0];
@@ -245,7 +267,9 @@
 		} else {
 			self.detailTextLabel.text = NSLocalizedString(@"Downloading...", nil);
 		}
-	} else if (self.download.status == DocSetDownloadStatusExtracting) {
+	} else if (self.download.status == DocSetDownloadStatusPaused) {
+        self.detailTextLabel.text = NSLocalizedString(@"Paused...", nil);
+    } else if (self.download.status == DocSetDownloadStatusExtracting) {
 		int extractedPercentage = (int)(self.download.progress * 100);
 		if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad) {
 			self.detailTextLabel.text = [NSString stringWithFormat:NSLocalizedString(@"Extracting Download... (%i%%)", nil), extractedPercentage];
@@ -267,9 +291,12 @@
 	}
 }
 
-- (void)cancelDownload:(id)sender
+- (void)cancelPauseDownload:(id)sender
 {
-    [[DocSetDownloadManager sharedDownloadManager] stopDownload:self.download];
+    if (self.download.status == DocSetDownloadStatusPaused)
+        [[DocSetDownloadManager sharedDownloadManager] resumeDownload:self.download];
+    else
+        [[DocSetDownloadManager sharedDownloadManager] stopDownload:self.download];
 }
 
 - (void)dealloc
