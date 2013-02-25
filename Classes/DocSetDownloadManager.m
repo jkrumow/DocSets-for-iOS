@@ -410,14 +410,13 @@
     
     self.shouldCancelExtracting = NO;
     
-    __block DocSetDownload *blockSelf = self;
 	dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
 		NSFileManager *fm = [[NSFileManager alloc] init];
-		NSString *extractionTargetPath = [[blockSelf.downloadTargetPath stringByDeletingLastPathComponent] stringByAppendingPathComponent:@"xar_extract"];
-		blockSelf.extractedPath = extractionTargetPath;
+		NSString *extractionTargetPath = [[self.downloadTargetPath stringByDeletingLastPathComponent] stringByAppendingPathComponent:@"xar_extract"];
+		self.extractedPath = extractionTargetPath;
 		[fm createDirectoryAtPath:extractionTargetPath withIntermediateDirectories:YES attributes:nil error:NULL];
 		
-		const char *xar_path = [blockSelf.downloadTargetPath fileSystemRepresentation];
+		const char *xar_path = [self.downloadTargetPath fileSystemRepresentation];
 		xar_t x = xar_open(xar_path, READ);
 		
 		xar_iter_t i = xar_iter_new();
@@ -435,13 +434,13 @@
 		
 		if (x == NULL) {
 			NSLog(@"Could not open archive");
-			[blockSelf fail];
+			[self fail];
 		} else {
 			xar_iter_t i = xar_iter_new();
 			xar_file_t f = xar_file_first(x, i);
 			NSInteger filesExtracted = 0;
 			do {
-				if (blockSelf.shouldCancelExtracting) {
+				if (self.shouldCancelExtracting) {
 					NSLog(@"Extracting cancelled");
 					break;
 				}
@@ -457,13 +456,13 @@
 					filesExtracted++;
 					float extractionProgress = (float)filesExtracted / (float)numberOfFiles;
 					dispatch_async(dispatch_get_main_queue(), ^{
-						blockSelf.progress = extractionProgress;
+						self.progress = extractionProgress;
 					});
 				}
 			} while (f != NULL);
 			xar_iter_free(i);
             
-            if (blockSelf.shouldCancelExtracting) {
+            if (self.shouldCancelExtracting) {
                 // Cleanup: delete all files that have already been extracted
                 NSFileManager *fm = [[NSFileManager alloc] init];
                 [fm removeItemAtPath:extractionTargetPath error:NULL];
@@ -472,14 +471,14 @@
 		xar_close(x);
 		
         // Delete only when cancelled.
-        if (blockSelf.status != DocSetDownloadStatusExtractionPaused)
-            [fm removeItemAtPath:blockSelf.downloadTargetPath error:NULL];
+        if (self.status != DocSetDownloadStatusExtractionPaused)
+            [fm removeItemAtPath:self.downloadTargetPath error:NULL];
 		
 		dispatch_async(dispatch_get_main_queue(), ^{
-            if (blockSelf.status == DocSetDownloadStatusExtractionPaused) {
+            if (self.status == DocSetDownloadStatusExtractionPaused) {
                 [[DocSetDownloadManager sharedDownloadManager] downloadPaused:self];
             } else {
-                blockSelf.status = DocSetDownloadStatusFinished;
+                self.status = DocSetDownloadStatusFinished;
                 [[DocSetDownloadManager sharedDownloadManager] downloadFinished:self];
 			}
 			if (_backgroundTask != UIBackgroundTaskInvalid)

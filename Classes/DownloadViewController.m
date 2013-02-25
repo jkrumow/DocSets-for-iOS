@@ -82,7 +82,7 @@
 	
     NSDictionary *downloadInfo = [[[DocSetDownloadManager sharedDownloadManager] availableDownloads] objectAtIndex:indexPath.row];
 	cell.downloadInfo = downloadInfo;
-		
+    
     return cell;
 }
 
@@ -100,11 +100,11 @@
 	NSString *name = [downloadInfo objectForKey:@"name"];
 	BOOL downloaded = [[[DocSetDownloadManager sharedDownloadManager] downloadedDocSetNames] containsObject:name];
 	if (downloaded) {
-		[[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Already Downloaded", nil) 
-									 message:NSLocalizedString(@"You have already downloaded this DocSet.", nil) 
-									delegate:nil 
-						   cancelButtonTitle:NSLocalizedString(@"OK", nil) 
-						   otherButtonTitles:nil] show];
+		[[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Already Downloaded", nil)
+                                    message:NSLocalizedString(@"You have already downloaded this DocSet.", nil)
+                                   delegate:nil
+                          cancelButtonTitle:NSLocalizedString(@"OK", nil)
+                          otherButtonTitles:nil] show];
 	} else {
 		NSString *docSetURL = [downloadInfo objectForKey:@"URL"];
 		[[DocSetDownloadManager sharedDownloadManager] downloadDocSetAtURL:docSetURL];
@@ -146,10 +146,21 @@
 	
     _cancelDownloadButton = [UIButton buttonWithType:UIButtonTypeCustom];
     _cancelDownloadButton.frame = CGRectMake(progressViewWidth + margin, 0, cancelButtonWidth, cancelButtonHeight);
-    [_cancelDownloadButton setImage:[UIImage imageNamed:@"Cancel.png"] forState:UIControlStateNormal];
-    [_cancelDownloadButton setImage:[UIImage imageNamed:@"Cancel-Pressed.png"] forState:UIControlStateHighlighted];
-    [_cancelDownloadButton setImage:[UIImage imageNamed:@"Cancel-Pressed.png"] forState:UIControlStateSelected];
+    [self updateCancelPauseDownloadButtonImage];
     [_cancelDownloadButton addTarget:self action:@selector(cancelPauseDownload:) forControlEvents:UIControlEventTouchUpInside];
+}
+
+- (void)updateCancelPauseDownloadButtonImage
+{
+    if (self.download.status == DocSetDownloadStatusDownloadPaused || self.download.status == DocSetDownloadStatusExtractionPaused) {
+        [self.cancelPauseDownloadButton setImage:[UIImage imageNamed:@"Pause.png"] forState:UIControlStateNormal];
+        [self.cancelPauseDownloadButton setImage:[UIImage imageNamed:@"Pause-Pressed.png"] forState:UIControlStateHighlighted];
+        [self.cancelPauseDownloadButton setImage:[UIImage imageNamed:@"Pause-Pressed.png"] forState:UIControlStateSelected];
+    } else {
+        [self.cancelPauseDownloadButton setImage:[UIImage imageNamed:@"Cancel.png"] forState:UIControlStateNormal];
+        [self.cancelPauseDownloadButton setImage:[UIImage imageNamed:@"Cancel-Pressed.png"] forState:UIControlStateHighlighted];
+        [self.cancelPauseDownloadButton setImage:[UIImage imageNamed:@"Cancel-Pressed.png"] forState:UIControlStateSelected];
+    }
 }
 
 - (void)layoutSubviews
@@ -170,34 +181,26 @@
 
 - (void)downloadStarted:(NSNotification *)notification
 {
-	if (!self.download) {
+	if (!self.download)
 		self.download = [[DocSetDownloadManager sharedDownloadManager] downloadForURL:[self.downloadInfo objectForKey:@"URL"]];
-	}
 }
 
 - (void)downloadPaused:(NSNotification *)notification
 {
-    if (notification.object == self.download) {
-        [self.cancelPauseDownloadButton setImage:[UIImage imageNamed:@"Pause.png"] forState:UIControlStateNormal];
-        [self.cancelPauseDownloadButton setImage:[UIImage imageNamed:@"Pause-Pressed.png"] forState:UIControlStateHighlighted];
-        [self.cancelPauseDownloadButton setImage:[UIImage imageNamed:@"Pause-Pressed.png"] forState:UIControlStateSelected];
-    }
+    if (notification.object == self.download)
+        [self updateCancelPauseDownloadButtonImage];
 }
 
 - (void)downloadResuming:(NSNotification *)notification
 {
-    if (notification.object == self.download) {
-        [self.cancelPauseDownloadButton setImage:[UIImage imageNamed:@"Cancel.png"] forState:UIControlStateNormal];
-        [self.cancelPauseDownloadButton setImage:[UIImage imageNamed:@"Cancel-Pressed.png"] forState:UIControlStateHighlighted];
-        [self.cancelPauseDownloadButton setImage:[UIImage imageNamed:@"Cancel-Pressed.png"] forState:UIControlStateSelected];
-    }
+    if (notification.object == self.download)
+        [self updateCancelPauseDownloadButtonImage];
 }
 
 - (void)downloadFinished:(NSNotification *)notification
 {
-	if (notification.object == self.download) {
+	if (notification.object == self.download)
 		self.download = nil;
-	}
 }
 
 - (void)setDownloadInfo:(NSDictionary *)downloadInfo
@@ -244,6 +247,7 @@
 		self.accessoryView = nil;
 		[self.progressView removeFromSuperview];
 	}
+    [self updateCancelPauseDownloadButtonImage];
 	[self updateStatusLabel];
 }
 
