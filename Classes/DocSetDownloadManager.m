@@ -316,23 +316,23 @@
 - (void)pause
 {
     if (self.status == DocSetDownloadStatusDownloading) {
-        self.status = DocSetDownloadStatusDownloadPaused;
         
         NSLog(@"Pausing download.");
         
         [self.connection cancel];
         [self.fileHandle closeFile];
+        self.status = DocSetDownloadStatusDownloadPaused;
         [[DocSetDownloadManager sharedDownloadManager] downloadPaused:self];
         
         if (_backgroundTask != UIBackgroundTaskInvalid)
             [[UIApplication sharedApplication] endBackgroundTask:_backgroundTask];
         
     } else if (self.status == DocSetDownloadStatusExtracting) {
-        self.status = DocSetDownloadStatusExtractionPaused;
         
         NSLog(@"Pausing extraction.");
         
         self.shouldCancelExtracting = YES;
+        self.status = DocSetDownloadStatusExtractionPaused;
         [[DocSetDownloadManager sharedDownloadManager] downloadPaused:self];
     }
 }
@@ -340,7 +340,6 @@
 - (void)resume
 {
     if (self.status == DocSetDownloadStatusDownloadPaused) {
-        self.status = DocSetDownloadStatusDownloading;
         
         NSLog(@"Resuming download.");
         
@@ -357,15 +356,16 @@
         [request addValue:requestRange forHTTPHeaderField:@"Range"];
         self.connection = [NSURLConnection connectionWithRequest:request delegate:self];
         
+        self.status = DocSetDownloadStatusDownloading;
         [[DocSetDownloadManager sharedDownloadManager] downloadResuming:self];
     } else if (self.status == DocSetDownloadStatusExtractionPaused) {
-        self.status = DocSetDownloadStatusExtracting;
         
         NSLog(@"Resuming extraction.");
         
         _backgroundTask = [[UIApplication sharedApplication] beginBackgroundTaskWithExpirationHandler:self.expirationBlock];
         
         [self extractDownload];
+        self.status = DocSetDownloadStatusExtracting;
         [[DocSetDownloadManager sharedDownloadManager] downloadResuming:self];
     }
 }
@@ -389,6 +389,8 @@
             [self.fileHandle writeData:data];
         }
         @catch (NSException *exception) {
+            
+            // Just in case the device locks down and encryption kicks in.
             NSLog(@"%@ %@", [exception reason], [exception userInfo]);
             [self pause];
         }
