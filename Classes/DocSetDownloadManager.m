@@ -491,7 +491,10 @@
 
 - (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error
 {
-	[self fail];
+    if (error.code == NSURLErrorNetworkConnectionLost)
+        [self pause];
+    else
+        [self fail];
 }
 
 - (void)fail
