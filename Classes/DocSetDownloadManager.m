@@ -120,13 +120,18 @@
 		[_downloadQueue removeObject:download];
 		[_downloadsByURL removeObjectForKey:[download.URL absoluteString]];
 		[[NSNotificationCenter defaultCenter] postNotificationName:DocSetDownloadFinishedNotification object:download];
-	} else if (download.status == DocSetDownloadStatusDownloading) {
+	} else if (download.status == DocSetDownloadStatusDownloading || download.status == DocSetDownloadStatusExtracting) {
 		[download cancel];
 		self.currentDownload = nil;
 		[_downloadsByURL removeObjectForKey:[download.URL absoluteString]];
 		[[NSNotificationCenter defaultCenter] postNotificationName:DocSetDownloadFinishedNotification object:download];
 		[self startNextDownload];
-	} else if (download.status == DocSetDownloadStatusExtracting) {
+	}
+}
+
+- (void)pauseDownload:(DocSetDownload *)download
+{
+    if (download.status == DocSetDownloadStatusDownloading || download.status == DocSetDownloadStatusExtracting) {
         [download pause];
 	}
 }
@@ -153,6 +158,11 @@
 	[[NSNotificationCenter defaultCenter] postNotificationName:DocSetDownloadManagerStartedDownloadNotification object:self];
 	
 	[self startNextDownload];
+}
+
+- (void)pauseCurrentDownload
+{
+    [self.currentDownload pause];
 }
 
 - (void)deleteDocSet:(DocSet *)docSetToDelete
@@ -211,6 +221,11 @@
 	[self.currentDownload start];
 }
 
+- (void)downloadPaused:(DocSetDownload *)download
+{
+    [[NSNotificationCenter defaultCenter] postNotificationName:DocSetDownloadPausedNotification object:download];
+}
+
 - (void)downloadFinished:(DocSetDownload *)download
 {
 	[[NSNotificationCenter defaultCenter] postNotificationName:DocSetDownloadFinishedNotification object:download];
@@ -245,16 +260,6 @@
                                delegate:nil
                       cancelButtonTitle:NSLocalizedString(@"OK", nil)
                       otherButtonTitles:nil] show];
-}
-
-- (void)downloadPaused:(DocSetDownload *)download
-{
-    [[NSNotificationCenter defaultCenter] postNotificationName:DocSetDownloadPausedNotification object:download];
-}
-
-- (void)downloadResuming:(DocSetDownload *)download
-{
-    [[NSNotificationCenter defaultCenter] postNotificationName:DocSetDownloadResumingNotification object:download];
 }
 
 @end
@@ -357,7 +362,7 @@
         self.connection = [NSURLConnection connectionWithRequest:request delegate:self];
         
         self.status = DocSetDownloadStatusDownloading;
-        [[DocSetDownloadManager sharedDownloadManager] downloadResuming:self];
+        
     } else if (self.status == DocSetDownloadStatusExtractionPaused) {
         
         NSLog(@"Resuming extraction.");
@@ -366,7 +371,6 @@
         
         [self extractDownload];
         self.status = DocSetDownloadStatusExtracting;
-        [[DocSetDownloadManager sharedDownloadManager] downloadResuming:self];
     }
 }
 

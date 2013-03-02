@@ -53,6 +53,12 @@
     return YES;
 }
 
+
+- (void)applicationDidReceiveMemoryWarning:(UIApplication *)application
+{
+    [[DocSetDownloadManager sharedDownloadManager] pauseCurrentDownload];
+}
+
 - (void)applicationDidEnterBackground:(UIApplication *)application
 {
 	[self saveInterfaceState];

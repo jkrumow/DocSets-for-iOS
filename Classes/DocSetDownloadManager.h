@@ -41,9 +41,11 @@
 - (void)reloadAvailableDocSets;
 - (void)updateAvailableDocSetsFromWeb;
 - (void)downloadDocSetAtURL:(NSString *)URL;
+- (void)pauseCurrentDownload;
 - (void)deleteDocSet:(DocSet *)docSetToDelete;
 - (DocSetDownload *)downloadForURL:(NSString *)URL;
 - (void)stopDownload:(DocSetDownload *)download;
+- (void)pauseDownload:(DocSetDownload *)download;
 - (void)resumeDownload:(DocSetDownload *)download;
 - (DocSet *)downloadedDocSetWithName:(NSString *)docSetName;
 
