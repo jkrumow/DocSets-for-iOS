@@ -395,7 +395,7 @@
         @catch (NSException *exception) {
             
             // Just in case the device locks down and encryption kicks in.
-            NSLog(@"%@ %@", [exception reason], [exception userInfo]);
+            NSLog(@"%@ %@ %@", [exception name], [exception reason], [exception userInfo]);
             [self pause];
         }
     }
