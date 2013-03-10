@@ -17,7 +17,7 @@
 - (void)startNextDownload;
 - (void)reloadDownloadedDocSets;
 - (void)downloadFinished:(DocSetDownload *)download;
-- (void)downloadFailed:(DocSetDownload *)download;
+- (void)downloadFailed:(DocSetDownload *)download withError:(NSError *)error;
 
 @end
 
@@ -248,15 +248,17 @@
 	[self startNextDownload];
 }
 
-- (void)downloadFailed:(DocSetDownload *)download
+- (void)downloadFailed:(DocSetDownload *)download withError:(NSError *)error
 {
 	[[NSNotificationCenter defaultCenter] postNotificationName:DocSetDownloadFinishedNotification object:download];
 	[_downloadsByURL removeObjectForKey:[download.URL absoluteString]];
 	self.currentDownload = nil;
 	[self startNextDownload];
 	
+    NSString *message = NSLocalizedString(@"An error occured while trying to download the DocSet.", nil);
+    if (error) message = error.localizedDescription;
 	[[[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Download Failed", nil)
-                                message:NSLocalizedString(@"An error occured while trying to download the DocSet.", nil)
+                                message:message
                                delegate:nil
                       cancelButtonTitle:NSLocalizedString(@"OK", nil)
                       otherButtonTitles:nil] show];
@@ -440,7 +442,7 @@
 		
 		if (x == NULL) {
 			NSLog(@"Could not open archive");
-			[self fail];
+			[self failWithError:nil];
 		} else {
 			xar_iter_t i = xar_iter_new();
 			xar_file_t f = xar_file_first(x, i);
@@ -498,12 +500,12 @@
     if (error.code == NSURLErrorNetworkConnectionLost)
         [self pause];
     else
-        [self fail];
+        [self failWithError:error];
 }
 
-- (void)fail
+- (void)failWithError:(NSError *)error
 {
-	[[DocSetDownloadManager sharedDownloadManager] downloadFailed:self];
+	[[DocSetDownloadManager sharedDownloadManager] downloadFailed:self withError:error];
 	if (_backgroundTask != UIBackgroundTaskInvalid) {
 		[[UIApplication sharedApplication] endBackgroundTask:_backgroundTask];
 	}

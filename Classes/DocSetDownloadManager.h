@@ -94,6 +94,6 @@ typedef enum DocSetDownloadStatus {
 - (void)cancel;
 - (void)pause;
 - (void)resume;
-- (void)fail;
+- (void)failWithError:(NSError *)error;
 
 @end
