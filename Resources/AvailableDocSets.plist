@@ -80,7 +80,7 @@
                 <key>title</key>
                 <string>Xcode 4.6 Developer Library</string>
                 <key>name</key>
-                <string>com.apple.adc.documentation.AppleXcode.DeveloperTools.docset</string>
+                <string>com.apple.ADC_Reference_Library.DeveloperTools.4_6.docset</string>
                 <key>URL</key>
                 <string>http://devimages.apple.com/docsets/20130128/com.apple.ADC_Reference_Library.DeveloperTools.4_6.xar</string>
             </dict>
