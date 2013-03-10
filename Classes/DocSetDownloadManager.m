@@ -58,7 +58,7 @@
 	
 	dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
 		
-		NSURL *availableDocSetsURL = [NSURL URLWithString:@"https://raw.github.com/omz/DocSets-for-iOS/master/Resources/AvailableDocSets.plist"];
+		NSURL *availableDocSetsURL = [NSURL URLWithString:@"https://raw.github.com/tarbrain/DocSets-for-iOS/master/Resources/AvailableDocSets.plist"];
 		NSHTTPURLResponse *response = nil;
 		NSData *updatedDocSetsData = [NSURLConnection sendSynchronousRequest:[NSURLRequest requestWithURL:availableDocSetsURL] returningResponse:&response error:NULL];
 		if (response.statusCode == 200) {
