@@ -324,7 +324,7 @@
 {
     if (self.status == DocSetDownloadStatusDownloading) {
         
-        NSLog(@"Pausing download.");
+        NSLog(@"Pausing download from %@", self.URL.absoluteString);
         
         [self.connection cancel];
         [self.fileHandle closeFile];
@@ -336,7 +336,7 @@
         
     } else if (self.status == DocSetDownloadStatusExtracting) {
         
-        NSLog(@"Pausing extraction.");
+        NSLog(@"Pausing extraction of docset from %@", self.URL.absoluteString);
         
         self.shouldCancelExtracting = YES;
         self.status = DocSetDownloadStatusExtractionPaused;
@@ -348,7 +348,7 @@
 {
     if (self.status == DocSetDownloadStatusDownloadPaused) {
         
-        NSLog(@"Resuming download.");
+        NSLog(@"Resuming download from %@", self.URL.absoluteString);
         
         _backgroundTask = [[UIApplication sharedApplication] beginBackgroundTaskWithExpirationHandler:self.expirationBlock];
         
@@ -367,7 +367,7 @@
         
     } else if (self.status == DocSetDownloadStatusExtractionPaused) {
         
-        NSLog(@"Resuming extraction.");
+        NSLog(@"Resuming extraction of docset from %@", self.URL.absoluteString);
         
         _backgroundTask = [[UIApplication sharedApplication] beginBackgroundTaskWithExpirationHandler:self.expirationBlock];
         
