@@ -6,9 +6,9 @@
 //  Copyright (c) 2012 juliankrumow. All rights reserved.
 //
 
-#import "NSFileManager+DocSetsAdditions.h"
+#import "NSFileManager+TemporaryDirectory.h"
 
-@implementation NSFileManager (DocSetsAdditions)
+@implementation NSFileManager (TemporaryDirectory)
 
 - (NSString *)tempDirectory
 {

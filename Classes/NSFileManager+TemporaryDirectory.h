@@ -9,7 +9,7 @@
 #import <Foundation/Foundation.h>
 
 
-@interface NSFileManager (DocSetsAdditions)
+@interface NSFileManager (TemporaryDirectory)
 
 - (NSString *)tempDirectory;
 

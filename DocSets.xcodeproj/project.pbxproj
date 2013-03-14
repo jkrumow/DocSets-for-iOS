@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		153F47CA1604C7B600C707CD /* NSFileManager+DocSetsAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 153F47C91604C7B600C707CD /* NSFileManager+DocSetsAdditions.m */; };
+		153F47CA1604C7B600C707CD /* NSFileManager+TemporaryDirectory.m in Sources */ = {isa = PBXBuildFile; fileRef = 153F47C91604C7B600C707CD /* NSFileManager+TemporaryDirectory.m */; };
 		15B692AE16DADFC000C9E8CA /* Pause-Pressed.png in Resources */ = {isa = PBXBuildFile; fileRef = 15B692AA16DADFC000C9E8CA /* Pause-Pressed.png */; };
 		15B692AF16DADFC000C9E8CA /* Pause-Pressed@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 15B692AB16DADFC000C9E8CA /* Pause-Pressed@2x.png */; };
 		15B692B016DADFC000C9E8CA /* Pause.png in Resources */ = {isa = PBXBuildFile; fileRef = 15B692AC16DADFC000C9E8CA /* Pause.png */; };
@@ -133,8 +133,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		153F47C81604C7B600C707CD /* NSFileManager+DocSetsAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSFileManager+DocSetsAdditions.h"; sourceTree = "<group>"; };
-		153F47C91604C7B600C707CD /* NSFileManager+DocSetsAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSFileManager+DocSetsAdditions.m"; sourceTree = "<group>"; };
+		153F47C81604C7B600C707CD /* NSFileManager+TemporaryDirectory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSFileManager+TemporaryDirectory.h"; sourceTree = "<group>"; };
+		153F47C91604C7B600C707CD /* NSFileManager+TemporaryDirectory.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSFileManager+TemporaryDirectory.m"; sourceTree = "<group>"; };
 		15B692AA16DADFC000C9E8CA /* Pause-Pressed.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Pause-Pressed.png"; sourceTree = "<group>"; };
 		15B692AB16DADFC000C9E8CA /* Pause-Pressed@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Pause-Pressed@2x.png"; sourceTree = "<group>"; };
 		15B692AC16DADFC000C9E8CA /* Pause.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Pause.png; sourceTree = "<group>"; };
@@ -475,8 +475,8 @@
 			children = (
 				7FDB349D1540D38800A4AF5F /* NSString+RelativePath.h */,
 				7FDB349E1540D38900A4AF5F /* NSString+RelativePath.m */,
-				153F47C81604C7B600C707CD /* NSFileManager+DocSetsAdditions.h */,
-				153F47C91604C7B600C707CD /* NSFileManager+DocSetsAdditions.m */,
+				153F47C81604C7B600C707CD /* NSFileManager+TemporaryDirectory.h */,
+				153F47C91604C7B600C707CD /* NSFileManager+TemporaryDirectory.m */,
 				7FF706C812ABE88A001FF09F /* DocSet.h */,
 				7FF706C912ABE88A001FF09F /* DocSet.m */,
 				7FACA8EB14CC371C00BADCC8 /* DocSetDownloadManager.h */,
@@ -801,7 +801,7 @@
 				7FDB349F1540D38900A4AF5F /* NSString+RelativePath.m in Sources */,
 				7FEFBF2C156B619D00C75316 /* BookmarksManager.m in Sources */,
 				7FEFBF35156D328200C75316 /* BookmarkSyncLogViewController.m in Sources */,
-				153F47CA1604C7B600C707CD /* NSFileManager+DocSetsAdditions.m in Sources */,
+				153F47CA1604C7B600C707CD /* NSFileManager+TemporaryDirectory.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

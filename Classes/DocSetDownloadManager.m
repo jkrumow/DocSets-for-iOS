@@ -6,7 +6,7 @@
 //  Copyright (c) 2012 omz:software. All rights reserved.
 //
 
-#import "NSFileManager+DocSetsAdditions.h"
+#import "NSFileManager+TemporaryDirectory.h"
 #import "DocSetDownloadManager.h"
 #import "DocSet.h"
 #import "xar.h"
